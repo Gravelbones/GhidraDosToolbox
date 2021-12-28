@@ -1,5 +1,10 @@
 .gradle
+
+# Ignore various build and other folders
 /build/
+/dist/
+/bin/
+/os/
 
 # Ignore Gradle GUI config
 gradle-app.setting
@@ -12,3 +17,8 @@ gradle-app.setting
 
 # # Work around https://youtrack.jetbrains.com/issue/IDEA-116898
 # gradle/wrapper/gradle-wrapper.properties
+
+# Ignore eclipse project file
+.classpath
+.project
+.settings/

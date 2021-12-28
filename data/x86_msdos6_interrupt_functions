@@ -1,0 +1,291 @@
+# List of DOS interrupt functions for Ms-Dos version 6
+# See project README.md file for details about format
+# NOTE: The file must be sorted in descending order
+## ## ## ################################## ###### ## ##
+21 5D 0B DosGetSwapableDataAreas R_DATASWAPAREAS:AX:DS:SI void
+21 5D 0A DosSetExtendedErrorInfo void param=PDOSPARAMLIST:DS:DX
+21 5D 09 DosFlushPrinterOutput void void
+21 5D 08 DosSetRedirectedPrinterMode void mode=byte:DL
+21 5D 07 DosGetRedirectedPrinterMode byte:DL void
+21 5D 06 DosGetAddressSwapableData R_ADRSWAP:AX:DS:SI:CX:DX void
+21 5D 05 DosServerGetOpenFileEntry word:AX dpl:PDOSPARAMLIST:DS:DX
+21 5D 04 DosServerProcessCloseAllFiles word:AX dpl:PDOSPARAMLIST:DS:DX
+21 5D 03 DosServerCloseAllFiles word:AX dpl:PDOSPARAMLIST:DS:DX
+21 5D 02 DosServerCloseFileByName word:AX dpl:PDOSPARAMLIST:DS:DX
+21 5D 01 DosServerCommitAllFiles word:AX dpl:PDOSPARAMLIST:DS:DX
+21 5D ?? DosServerFunctionCall word:AX dpl:PDOSPARAMLIST:DS:DX
+21 5C -- DosFileLock word:AX mode:byte:AL,handle:word:BX,offset:dword:CX:DX,length:dword:SI:DI
+21 5B -- DosCreateFileWithMode word:AX name:char*:DS:DX,mode:word:CX
+21 5A -- DosCreateTemporaryFileMode word:AX name:char*:DS:DX,mode:word:CX
+21 59 -- DosGetExtendedErrorInfo R_EXTENDEDERROR:AX:BH:BL:CH:ES:DI flag:word:BX
+21 58 03 DosSetUMBLinkState void state:word:BX
+21 58 02 DosGetUMBLinkState byte:AL void
+21 58 01 DosSetAllocationStrategy void strategy:word:BX
+21 58 00 DosGetAllocationStrategy word:AX void
+21 57 07 DosSetCreateDateTime word:AX handle:word:BX,time:word:CX,date:word:DX,milli:word:SI
+21 57 06 DosGetCreateDateTime R_CREATEINFO:AX:CX:DX:SI handle:word:BX
+21 57 05 DosSetAccessDateTime word:AX handle:word:BX,time:word:CX,date:word:DX
+21 57 04 DosSetExtendedAttr word:AX handle:word:BX,eav_list:PDOSEAVLIST:ES:DI
+21 57 03 DosGetExtendedAttrProp R_STATUSLEN:AX:CX handle:word:BX,size:word:CX,buffer:byte*:ES:DI
+21 57 02 DosGetExtendedAttr R_STATUSLEN:AX:CX handle:word:BX,size:word:CX,eap:PEAPLIST:DS:SI,eav:PEAVLIST:ES:DI
+21 57 01 DosSetFileTimestamp word:AX handle:word:BX,time:word:CX,date:word:DX
+21 57 00 DosGetFileTimestamp R_FILEINFO:AX:CX:DX handle:word:BX
+21 56 -- DosRenameFile word:AX name:char*:DS:DX,newname:char*:ES:DI
+21 55 -- DosCreateChildPSP void segment:word:DX,size:word:SI
+21 54 -- DosGetVerifyFlag byte:AL void
+21 53 -- DosTranslateBiosParamBlkToDriveParamBlock void bios:PDOSBPB:DS:SI,drive:PDOSDPB:ES:BP
+21 52 -- DosGetSysvars PDOSSYSVAR:ES:BX void
+21 51 -- DosGetCurrentProcId word:BX void
+21 50 -- DosSetCurrentProcId void procid:word:BX
+21 4F -- DosFindNextFile word:AX void
+21 4E -- DosFindFirstFile word:AX name:char*:DS:DX,attrmask:word:CX,append_flag:byte:AL
+21 4D -- DosGetReturnCode R_ERRORRETURN:AL:AH void
+21 4C -- DosTerminateErrorCode void error_code:byte:AL
+21 4B 05 DosSetExecState word:AX state:PDOSEXECSTATE:DS:DX
+21 4B 04 DosExecuteProgramBackground word:AX name:char*:DS:DX,param:byte*:ES:BX,mode:word:CX
+21 4B 03 DosExecuteProgramOverlay word:AX name:char*:DS:DX,param:byte*:ES:BX
+21 4B 01 DosExecuteProgramLoadOnly word:AX name:char*:DS:DX,param:byte*:ES:BX
+21 4B ?? DosExecuteProgram word:AX name:char*:DS:DX,param:byte*:ES:BX,mode:byte:AL
+21 4A -- DosResizeMemory R_RESIZEMEM:AX:BX size:word:BX,memblock:word:ES
+21 49 -- DosFreeMemory word:AX memblock:word:ES
+21 48 -- DosAllocateMemory word:AX size:word:BX
+21 47 -- DosGetCurrentDir word:AX drive:byte:DL,buffer:PDOSASCIIZPATH:DS:SI
+21 46 -- DosForceDuplicateHandle word:AX handle:word:BX,dup:handle:word:CX
+21 45 -- DosDuplicateHandle word:AX handle:word:BX
+21 44 11 DosQueryGenericIoctlDrive word:AX drive:byte:BL,category:byte:CH,function:byte:CL
+21 44 10 DosQueryGenericIoctlHandle word:AX handle:word:BX,category:byte:CH,function:byte:CL
+21 44 0F DosSetLogicalDriveMap word:AX drive:byte:BL
+21 44 0E DosGetLogicalDriveMap word:AX drive:byte:BL
+21 44 0D DosGenericBlockDeviseReq R_IOCTL:AX:DS:DX drive:byte:BL,category:byte:CH,function:byte:CL,param:byte*:DS:DX
+21 44 0C DosGenericCharDeviceReq R_IOCTLCHAR:AX:DS:DX:SI:DI handle:word:BX,category:byte:CH,function:byte:CL,param:byte*:DS:DX,si_param:word:SI,di_param:word:DI
+21 44 0B DosSetSharingRetry word:AX pause:word:CX,count:word:DX
+21 44 0A DosCheckHandleRemote R_HANDLEREMOTE:AX:DX handle:word:BX
+21 44 09 DosCheckBlockDeviseRemote word:AX drive:byte:BL
+21 44 08 DosCheckBlockDeviseRemovable word:AX drive:byte:BL
+21 44 07 DosGetOutputStatus byte:AL handle:word:BX
+21 44 06 DosGetInputStatus byte:AL handle:word:BX
+21 44 05 DosWriteBlockDeviseControl word:AX drive:byte:BL,size:word:CX,buffer:byte*:DS:DX
+21 44 04 DosReadBlockDeviseControl word:AX drive:byte:BL,size:word:CX,buffer:byte*:DS:DX
+21 44 03 DosWriteCharDeviseControl word:AX handle:word:BX,size:word:CX,buffer:byte*:DS:DX
+21 44 02 DosReadCharDeviseControl word:AX handle:word:BX,size:word:CX,buffer:byte*:DS:DX
+21 44 01 DosSetDeviceInfo word:AX handle:word:BX,information:word:DX
+21 44 00 DosGetDeviseInfo R_DEVICEINFO:AX:DX handle:word:BX
+21 43 02 DosGetCompressedFileSize word:AX name:char*:DX
+21 43 01 DosSetFileAttributes word:AX name:char*:DS:DX,attr:word:CX
+21 43 00 DosGetFileAttributes R_GETATTR:AX:CX name:char*:DS:DX
+21 42 -- DosSeekFile dword:DX:AX handle:word:BX,seekmode:byte:AL,offset:dword:CX:DX
+21 41 -- DosDeleteFile word:AX name:char*:DS:DX
+21 40 -- DosWriteFile word:AX handle:word:BX,buffer:char*:DS:DX,size:word:CX
+21 3F -- DosReadFile word:AX handle:word:BX,buffer:char*:DS:DX,size:word:CX
+21 3E -- DosCloseFile word:AX handle:word:BX
+21 3D -- DosOpenFile word:AX name:char*:DS:DX,access:byte:AL,attr:byte:CL
+21 3C -- DosCreateFile word:AX name:char*:DS:DX,attr:word:CX
+21 3B -- DosChdir word:AX name:char*:DS:DX
+21 3A -- DosRmdir word:AX name:char*:DS:DX
+21 39 -- DosMkdir word:AX name:char*:DS:DX
+21 38 -- DosGetCountryInfo R_COUNTRYINFO:AX:BX country_low:byte:AL,country_high:word:BX,buffer:PCOUNTRYINFO:DS:DX
+21 37 03 DosSetAvailDevFlag byte:DL flag:byte:DL
+21 37 02 DosGetAvailDevFlag byte:DL void
+21 37 01 DosSetSwitchChar byte:AL ch:byte:DL
+21 37 00 DosGetSwitchChar R_SWITCHCHAR:AL:DL void
+21 36 -- DosGetFreeDiskSpace R_DISKSPACE:AX:BX:CX:DX drive:byte:DL
+21 35 -- DosGetInterruptVector InterruptVector:ES:BX intr:byte:AL
+21 34 -- DosGetAddressInDosFlag byte*:ES:BX void
+21 33 06 DosGetTrueVersion R_TRUEVERSION:AL:BL:BH:DL:DH void
+21 33 05 DosGetBootDrive byte:DL void
+21 33 02 DosGetSetExtendedBreak byte:DL state:byte:DL
+21 33 01 DosSetExtendedBreak void state:byte:DL
+21 33 00 DosGetExtendedBreak byte:DL void
+21 32 -- DosGetDriveNoParam R_GETPDB:DS:BX:AL drive:byte:DL
+21 31 -- DosTerminateStayResident void error_code:byte:AL,para:word:DX
+21 30 -- DosGetVersion R_VERSIONINFO:AL:AH:BL:BH:CX type:byte:AL
+21 2F -- DosGetDTAAddress byte*:ES:BX void
+21 2E -- DosSetVerifyFlag void flag:byte:AL
+21 2D -- DosSetSystemTime byte:AL hour:byte:CH,minute:byte:CL,second:byte:DH,sec100:byte:DL
+21 2C -- DosGetSystemTime R_SYSTEMTIME:CH:CL:DH:DL void
+21 2B -- DosSetSystemDate byte:AL year:word:CX,month:byte:DH,day:byte:DL
+21 2A -- DosGetSystemDate R_SYSTEMDATE:CX,DH:DL:AL void
+21 29 -- DosParseFileNameToFCB byte:AL name:char*:DS:SI,buffer:PDOSCLOSEDFCB:ES:DI,options:byte:AL
+21 28 -- DosWriteRandomBlockFCB R_FILESTATUS:CX:AL fcb:PDOSOPENFCB:DS:DX,len:word:CX
+21 27 -- DosReadRandomBlockFCB R_FILESTATUS:CX:AL fcb:PDOSOPENFCB:DS:DX,len:word:CX
+21 26 -- DosCreateNewPSP void new_psp:word:DX
+21 25 -- DosSetInterruptVector void intr:byte:AL,func:InterruptVectpr:DS:DX
+21 24 -- DosSetRandomRecNoFCB void fcb:PDOSOPENFCB:DS:DX
+21 23 -- DosGetFileSizeFCB byte:AL fcb:PDOSOPENFCB:DS:DX
+21 22 -- DosWriteRandomRecFCB byte:AL fcb:PDOSOPENFCB:DS:DX
+21 21 -- DosReadRandomRecFCB byte:AL fcb:POPENDOSFCB:DS:DX
+21 20 -- DosReservedCPMFunction void void
+21 1F -- DosGetDriveParam R_GETPDB:DS:BX:AL void
+21 1E -- DosReservedCPMFunction void void
+21 1D -- DosReservedCPMFunction void void
+21 1C -- DosGetDriveNoAllocInfo R_DRIVEALLOC:CX:DX:DS:BX:AL drive:byte:DL
+21 1B -- DosGetDriveAllocInfo R_DRIVEALLOC:CX:DX:DS:BX:AL void
+21 1A -- DosSetDTAAddress byte:AL dta:PDOSDTA:DS:DX
+21 19 -- DosGetCurrentDrive byte:AL void
+21 18 -- DosReservedCPMFunction void void
+21 17 -- DosRenameFCB byte:AL fcb:PDOSOPENFCB:DS:DX
+21 16 -- DosCreateTruncFCB byte:AL fcb:PDOSOPENFCB:DS:DX
+21 15 -- DosSequentialWriteFCB byte:AL fcb:PDOSOPENFCB:DS:DX
+21 14 -- DosSequentialReadFCB byte:AL fcb:PDOSOPENFCB:DS:DX
+21 13 -- DosDeleteFileFCB byte:AL fcb:PDOSCLOSEDFCB:DS:DX
+21 12 -- DosFindNextFileFCB byte:AL fcb:POPENDOSFCB:DS:DX
+21 11 -- DosFindFirstFileFCB byte:AL fcb:PFOSOPENFCB:DS:DX
+21 10 -- DosCloseFileFCB byte:AL fcb:PDOSOPENFCB:DS:DX
+21 0F -- DosOpenFileFCB byte:AL fcb:PDOSOPENFCB:DS:DX
+21 0E -- DosSelectDefaultDrive byte:AL drive:byte:DL
+21 0D -- DosDiskReset void void
+21 0C 0A DosFlushBufferReadString void buffer:char*:DS:DX
+21 0C 09 DosFlushBufferWriteString byte:AL buffer:char*:DS:DX
+21 0C 08 DosFlushBufferReadCharNoEcho char:AL void
+21 0C 07 DosFlushBufferReadKeybNoEcho char:AL void
+21 0C 06 DosFlushBufferConsoleInOut char:AL ch:char:DL
+21 0C 02 DosFlushBufferDosWriteChar byte:AL ch:char:DL
+21 0C 01 DosFlushBufferReadChar char:AL void
+21 0C ?? DosFlushBuffer void void
+21 0B -- DosStdinStatus byte:AL void
+21 0A -- DosReadString void buffer:char*:DS:DX
+21 09 -- DosWriteString byte:AL buffer:char*:DS:DX
+21 08 -- DosReadCharNoEcho byte:AL void
+21 07 -- DosReadKeybNoEcho byte:AL void
+# This could be split. In is when DL = 0xFF
+21 06 -- DosConsoleInOut byte:AL ch:char:DL
+21 05 -- DosWriteCharPrt void ch:char:DL
+21 04 -- DosWriteCharAux void ch:char:DL
+21 03 -- DosReadCharAux char:AL void
+21 02 -- DosWriteChar byte:AL ch:char:DL
+21 01 -- DosReadChar byte:AL void
+21 00 -- DosTerminate void void
+20 -- -- DosTerminate void void
+
+
+#14 04 -- SerialExtendedInitialize (WORD AX port_status) (byte AL break_status, SerialParity BH parity,byte BL stop_bits, SerialWordLength CH word_length, byte CL bps_rate, WORD DX port_number)
+#14 03 -- SerialGetPortStatus (byte AH line_status, byte AL modem_status) (WORD DX port_number)
+#14 02 -- SerialReadCharacterPort (byte AH status, byte AL ch) (WORD DX port_number)
+#14 01 -- SerialWriteCharPort (byte AH status) (byte AL ch, word DX port_number)
+#14 00 -- SerialInitializePort (byte AH line_status, byte AL modem_status) (byte AL port_param, word DX port_number)
+#13 1C 0C DiskGetPosInformation (byte AH status) (TEsdiPosInformationStatusBlock* ES:BX buffer)
+#13 1C 0B DiskGetAdapterConfiguration (byte AH status) (TEsdiControllerConfigurationStatusBlock* ES:BX buffer)
+#13 1C 0A DiskGetDeviceConfiguration (byte AH status) (byte DL drive_number, TEsdiDriveConfigurationStatusBlock* ES:BX buffer)
+#13 1C 09 DiskGetDeviceStatus (byte AH status) (byte DL drive_number, TEsdiDeviceStatusBlock* ES:BX buffer)
+#13 1C 08 DiskGetCommandCompletionStatus (byte AH status) (byte DL drive_number, TEsdiCommandCompleteStatusBlock* ES:BX buffer)
+#13 1B -- DiskGetManufacturingHeader (byte AH status) (byte AL num_sectors, byte DL drive_number, byte* ES:BX defect_table)
+#13 1A -- DiskFormatUnit (byte AH status) (byte AL defect_table, byte CL format_modifiers, byte DL drive_number, byte* ES:BX defect_table)
+#13 19 -- DiskParkDriveHeads (byte AH status) (byte DL drive_number)
+#13 18 -- DiskSetMediaTypeFormat (byte AH status, TDiskMediaType* ES:DI buffer) (byte CH cyl_low, byte CL sector_per_track, byte DL drive_number)
+#13 17 -- DiskSetDiskTypeFormat (byte AH status) (byte AL format_type, byte DL drive_number)
+#13 16 -- DiskDetectDiskChange (byte AH status) (byte DL drive_number)
+#13 15 -- DiskGetDiskType (byte AH type_code, DWORD CX:DX) (byte DL drive_number)
+#13 14 -- DiskControllerInternalDiagnostic (byte AH status) (void)
+#13 13 -- DiskDriveDiagnostic (byte AH status) (byte DL drive_number)
+#13 12 -- DiskControllerRAMDiagnostic (byte AH status) (byte DL drive_number)
+#13 11 -- DiskRecalibrateDrive (byte AH status) (byte DL drive_number)
+#13 10 -- DiskCheckDriveReady (byte AH status) (byte DL drive_number)
+#13 0F -- DiskWriteSectorBuffer (byte AH status) (byte DL drive_number, byte* ES:BX buffer)
+#13 0E -- DiskReadSectorBuffer (byte AH status) (byte DL drive_number, byte* ES:BX buffer)
+#13 0D -- DiskResetHardDisks (byte AH status) (byte DL drive_number)
+#13 0C -- DiskSeekCylinder (byte AH status) (byte CH cyl_low, byte CL sector_num, byte DH head, byte DL drive_number)
+#13 0B -- DiskWriteLongSectors (byte AH status, byte sectors_read) (byte AL numbers_sector, byte CH cyl_low, byte CL sector_num, byte DH head_number, byte DL drive_number, byte* ES:BX buffer)
+#13 0A -- DiskReadLongSectors (byte AH status, byte sectors_read) (byte AL numbers_sector, byte CH cyl_low, byte CL sector_num, byte DH head_number, byte DL drive_number, byte* ES:BX buffer)
+#13 09 -- DiskInitializeControllerWithDriveParameters (byte AH status) (byte DL drive_number)
+#13 08 -- DiskGetDriveParameters (word AX status, byte BL drive_type, byte CH max_cyl, byte CL max_sector, byte DH max_head, byte DL number_drives) (byte DL drive_number)
+#13 07 -- DiskFormatDriveStartTrack (byte AH status) (byte AL interleave, byte CH cyl, byte CL sector, byte DL drive_number, byte DH head, PDiskFieldBuffer* ES:BX buffer)
+#13 06 -- DiskFormatTrackWithBadSector (byte AH status) (byte AL interleave, byte CH cyl, byte CL sector, byte DL drive_number, byte DH head)
+#13 05 -- DiskFormatTrack (byte AH status) (byte AL number_sec, byte CH track, byte DH head, byte DL drive_number, PDiskFieldBuffer* ES:BX buffer)
+#13 04 -- DiskVerifySector (byte AH status, byte AL number_sec) (byte AL number_sec, byte CL sector_number, byte CH low_cyl, byte DH head_number, byte DL drivenumer, byte *ES:BX buffer)
+#13 03 -- DiskWriteSector (byte AH status, byte AL number_sec) (byte AL number_sec, byte CL sector_number, byte CH low_cyl, byte DH head_number, byte DL drivenumber, byte* ES:BX buffer)
+#13 02 -- DiskReadSector (byte AH status, byte AL number_sec) (byte AL number_sec, byte CL sector_number, byte CH low_cyl, byte DH head_number, byte DL drivenumber, byte* ES:BX buffer)
+#13 01 -- DiskGetStatusLastOperation (byte AH status) (byte DL drive)
+#13 00 -- DiskResetSystem (byte AH status) (byte DL drive)
+#12 -- -- GetMemorySize (word AX) (void)
+#11 -- -- GetEquipmentList (word AX) (void)
+# 10 4F TODO: should be expanded to full list with subfunctions
+#10 4F -- VideoVesaSuperVGABios (void) (void)
+# 10 4E TODO: should be expanded to full list with subfunctions
+#10 4E -- VideoVesaXGABiosExtensions (void) (void)
+# 10 1F TODO: should be expanded to full list with subfunctions
+#10 1F -- VideoTodoXGAFunctions (void) (void)
+# 10 1E TODO: should be expanded to a full list with subfunctions
+#10 1E -- VideoTodoFlatPanelFunctions (void) (void)
+#10 1C 02 VideoGetState (byte AL status) (byte* ES:BX buffer, word CX states)
+#10 1C 01 VideoSaveState (byte AL status) (byte* ES:BX buffer, word CX states)
+#10 1C 00 VideoGetStateBufferSize (word BX size) (void)
+#10 1B -- VideoFunctionalityStateInformation (byte AL status) (word BX implementation, TVideoStateBuffer* ES:DI buffer)
+#10 1A 01 VideoSetDisplayCombinationCode (void) (byte BL display_code, byte BH alternate_display_code)
+#10 1A 00 VideoGetDisplayCombinationCode (byte AL status, byte BL display_code, byte BH alternate_display_code) (void)
+#10 13 -- VideoWriteString (void) (byte AL mode, byte BH page_number, byte BL attribute, word CX length, TVideoPos pos, char* ES:BP str)
+#10 12 BL/37 VideoXGAMainframeInteractiveSupport (byte AL status) (byte AL attribute_type)
+#10 12 BL/36 VideoAltFuncSelVideoRefreshControl (byte AL status) (byte AL new_state)
+#10 12 BL/35 VideoAltFuncSelDisplaySwitchInterface (byte AL status) (byte AL new_state, byte[128]* ES:DX save_area)
+#10 12 BL/34 VideoAltFuncSelCursorEmulation (byte AL status) (byte AL new_state)
+#10 12 BL/33 VideoAltFuncSelGrayScaleSumming (byte AL status) (byte AL new_state)
+#10 12 BL/32 VideoAltFuncSelVideoAddressing (byte AL status) (byte AL new_state)
+#10 12 BL/31 VideoAltFuncSelPaletteLoading (byte AL status) (byte AL new_state)
+#10 12 BL/30 VideoAltFuncSelSelectVerticalResolutuion (byte AL status) (byte AL resolution)
+#10 12 BL/20 VideoAltFuncSelAlternatePrtsc (void) (void)
+#10 12 BL/10 VideoAltFuncSelGetEGAInfo (byte BH video_state, byte BL memory, byte CH feature_bits, byte CL switch_settings) (void)
+#10 11 30 VideoGetFontInformation (word CX chars_of_font, byte DL row, byte* ES:BP pointer) (byte BH font_specifier)
+#10 11 24 VideoGraphModeChargenLOAD8x16GraphChars (void) (byte BL row_specifier)
+#10 11 23 VideoGraphModeChargenSetROM8x8DblDotChars (void) (byte BL row_specifier)
+#10 11 22 VideoGraphModeChargenSetROM8x14GraphChars (void) (byte BL row_specifier)
+#10 11 21 VideoGraphModeChargenSetUserGraphChar (byte AL rows) (word CX bytes_pr_char, byte BL row_specifier, byte DL number_of_rows, byte* ES:BP user table)
+#10 11 20 VideoGraphModeCchargenSetUser8x8GraphChars (void) (byte* ES:BP user_table)
+#10 11 14 VideoTextModeChargenLoadROM8x16CharSet (void) (byte BL block)
+#10 11 12 VideoTextModeChargenLoadROM8x8DblDot (void) (byte BL block)
+#10 11 11 VideoTextModeChargenLoadROMMonoPatterns (void) (byte BL block)
+#10 11 10 VideoTextModeChargenLoadUserPatterns (void) (byte BL block_load, byte BH bytes_pr_char, word CX count, word DX offset, char* ES:BP data)
+#10 11 04 VideoTextModeChargenLoadROM8x16CharSet (void) (byte BL block)
+#10 11 03 VideoTextModeChargenSetBlockSpecifier (void) (byte BL specifier)
+#10 11 02 VideoTextModeChargenLoadROM8x8DblDot (void) (byte BL block)
+#10 11 01 VideoTextModeChargenLoadROMMonoPattern (void) (byte BL block)
+#10 11 00 VideoTextModeChargenUserChar (void) (byte BL block_load, byte BH bytes_pr_char, word CX count, word DX offset)
+#10 10 1B VideoPerformGrayScaleSumming (void) (word BX start, word CX length)
+#10 10 1A VideoGetVideoDACColorPageState (byte BL paging_mode, byte BH page)
+#10 10 19 VideoReadPelMask (byte BL value) (void)
+#10 10 18 VideoSetPELMask (void) (byte BL value)
+#10 10 17 VideoReadBlockDACRegisters (void) (word BX start, word CX length, byte* ES:DX value_list)
+#10 10 15 VideoReadDACRegister (byte CH green, byte CL blue, byte DH red) (byte BL palette_register)
+#10 10 13 VideoSelectVideoDACColorPage (void) (byte BL mode, byte BH value)
+#10 10 12 VideoSetBlockDACRegisters (void) (word BX start, word CX length, byte* ES:DX value_list)
+#10 10 10 VideoSetDACRegister (void) (word BX number, byte CH green, byte CL blue, byte DH red)
+#10 10 09 VideoReadAllPaletteRegisters (void) (TPaletteList* ES:DX palette_register_list)
+#10 10 08 VideoReadOverscanRegister (byte BH value) (void)
+#10 10 07 VideoGetPaletteRegister (byte BH value) (byte BL palette_register)
+#10 10 03 VideoToggleIntensityBlinkingBit (void) (byte BL state)
+#10 10 02 VideoSetAllPaletteRegisters (void) (TPaletteList* ES:DX palette_register_list)
+#10 10 01 VideoSetBorderColor (void) (byte BH color)
+#10 10 00 VideoSetPaletteRegister (void) (byte BL palette_register, byte BH value)
+#?10 10 -- VideoSetWindowCoord (byte AL status) (TvideoPos CX upper_left, TvideoPos DX lower_right)
+#10 0F -- VideoGetVideoMode (byte AL mode, byte AH width, byte BH page_number) (void)
+#10 0E -- VideoTeletypeOutput (void) (byte BH page_number, byte BL color, char AL ch )
+#10 0D -- VideoReadPixel (byte AL color) (byte BL page_number, word DX row, word CX col)
+#10 0C -- VideoWritePixel (void) (byte BL page_number, byte AL color, word DX row, word CX col)
+#10 0B BH/02 VideoSetPaletteEntry (void) (byte BL palette_entry, byte AL color)
+#10 0B BH/01 VideoSetPalette (void) (byte BL palette)
+#10 0B BH/00 VideoSetBGColor (void) (byte BL color)
+#10 0A -- VideoWriteCharOnlyCursorPos (void) (byte BH page_number, byte BL attr, char AL ch, word CX count)
+#10 09 -- VideoWriteCharAttrCursorPos (void) (byte BH page_number, byte BL attr, char AL ch, word CX count)
+#10 08 -- VideoReadCharAttrCursorPos (TCharInfo AX info) (byte BH page_number)
+#10 07 -- VideoScrollDownWindow (void) (byte AL num_lines, byte BH clear_attribute, TvideoPos CX upper_left, TvideoPos DX lower_right)
+#10 06 -- VideoScrollUpWindow (void) (byte AL num_lines, byte BH clear_attribute, TVideoPos CX upper_left, TVideoPos DX lower_right)
+#10 05 -- VideoSelectActiveDisplayPage (void) (byte AL page_number)
+#10 04 -- VideoReadLightPenPosition (byte AH pen_flag, word CX pixel_row, word BX pixel_col, TVideoPos DX pos)
+#10 03 -- VideoGetCursorPositionAndSize (TScanLine CX scan, TVideoPos DX pos) (byte BH page_number)
+#10 02 -- VideoSetCursorPosition (void) (byte BH page_number, TVideoPos DX pos)
+#10 01 -- VideoSetTextCursorShape (void) (TScanCursor CX)
+#10 00 -- VideoSetMode (BiosVideoMode AL) (BiosVideoMode AL video_mode)
+0F -- -- Irq7_Parallel_printer void void
+0E -- -- Irq6_Diskette_controller void void
+0D -- -- Irq5_Fixed_Disk void void
+0C -- -- Irq4_Serial_Comm1 void void
+0B -- -- Irq3_Serial_Comm2 void void
+0A -- -- Irq2_Lpt2_Retrace void void
+09 -- -- Irq1_Keyboard_data_ready void void
+08 -- -- Irq0_System_Timer void void
+07 -- -- Processor_Extension_Not_Available void void
+06 -- -- InvalidOpcode void void
+05 -- -- PrintScreen_Intr void void
+04 -- -- IntoDetected void void
+03 -- -- BreakPoint void void
+02 -- -- NonMaskInterrupt void void
+01 -- -- SingleStep void void
+00 -- -- MathDivideError void void

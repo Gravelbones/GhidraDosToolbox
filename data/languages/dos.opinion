@@ -1,0 +1,5 @@
+<opinions>
+    <constraint loader="Old-style DOS Executable (MZ)(Experimental)" compilerSpecID="default">
+        <constraint primary="23117" processor="x86" endian="little" size="16" variant="Real Mode"/>
+    </constraint>
+</opinions>

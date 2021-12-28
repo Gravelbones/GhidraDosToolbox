@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- See Relax specification: Ghidra/Framework/SoftwareModeling/data/languages/language_definitions.rxg -->
+
+<language_definitions>
+  <language processor="x86"
+            endian="little"
+            size="16"
+            variant="Real Mode"
+            version="1.00"
+            slafile="x86.sla"
+            processorspec="x86-16-real.pspec"
+            manualindexfile="../manuals/x86.idx"
+            id="x86:LE:16:Real Mode Ex">
+    <description>Intel/AMD 16-bit x86 Real Mode (Experimental)</description>
+    <compiler name="default" spec="x86-16.cspec" id="default"/>
+    <compiler name="Visual Studio" spec="x86win.cspec" id="windows"/>
+    <compiler name="watcom" spec="x86watcom.cspec" id="watcom"/>
+    <compiler name="Borland C++" spec="x86borland.cspec" id="borlandcpp"/>
+	<external_name tool="IDA-PRO" name="8086"/>
+	<external_name tool="IDA-PRO" name="8086r"/>
+	<external_name tool="IDA-PRO" name="80386r"/>
+	<external_name tool="IDA-PRO" name="80486r"/>
+	<external_name tool="IDA-PRO" name="80586r"/>
+	<external_name tool="IDA-PRO" name="metapc"/>
+    <external_name tool="gnu" name="i8086"/>
+    <external_name tool="gdis.disassembler.options.file" name="x86-16.gdis"/>
+    </language>
+</language_definitions>
