@@ -1,7 +1,7 @@
 package ghidradostoolbox;
 
 /* ###
- * Created By: Morten Rønne
+ * Created By: Morten Rï¿½nne
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,10 +19,8 @@ package ghidradostoolbox;
  * Class for holding either a function reference and/or a list for further subdivision
  */
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import generic.jar.ResourceFile;
 import ghidra.framework.Application;
