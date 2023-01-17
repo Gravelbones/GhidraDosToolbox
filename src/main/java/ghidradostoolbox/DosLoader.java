@@ -1,6 +1,6 @@
 /* ###
  * IP: GHIDRA
- * Modified by: Gravelbones for testing purpose
+ * Modified by: Morten Rønne for testing purpose
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,16 +20,13 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.util.*;
 
-import generic.continues.ContinuesFactory;
-import generic.continues.RethrowContinuesFactory;
 import ghidra.app.util.MemoryBlockUtils;
 import ghidra.app.util.Option;
+import ghidra.app.util.bin.BinaryReader;
 import ghidra.app.util.bin.ByteProvider;
-import ghidra.app.util.bin.format.FactoryBundledWithBinaryReader;
 import ghidra.app.util.bin.format.mz.DOSHeader;
 import ghidra.app.util.bin.format.mz.OldStyleExecutable;
 import ghidra.app.util.importer.MessageLog;
-import ghidra.app.util.importer.MessageLogContinuesFactory;
 import ghidra.app.util.opinion.AbstractLibrarySupportLoader;
 import ghidra.app.util.opinion.LoadSpec;
 import ghidra.app.util.opinion.QueryOpinionService;
@@ -53,7 +50,6 @@ import ghidra.program.model.symbol.SourceType;
 import ghidra.program.model.symbol.Symbol;
 import ghidra.program.model.symbol.SymbolTable;
 import ghidra.program.model.symbol.SymbolUtilities;
-import ghidra.util.Conv;
 import ghidra.util.DataConverter;
 import ghidra.util.LittleEndianDataConverter;
 import ghidra.util.Msg;
@@ -132,7 +128,7 @@ public class DosLoader extends AbstractLibrarySupportLoader {
 		if (provider.length() < MIN_BYTE_LENGTH) {
 			return loadSpecs;
 		}
-		OldStyleExecutable ose = new OldStyleExecutable(RethrowContinuesFactory.INSTANCE, provider);
+		OldStyleExecutable ose = new OldStyleExecutable(provider);
 		DOSHeader dos = ose.getDOSHeader();
 		if (dos.isDosSignature() && !dos.hasNewExeHeader() && !dos.hasPeHeader()) {
 			List<QueryResult> results =
@@ -163,10 +159,9 @@ public class DosLoader extends AbstractLibrarySupportLoader {
 		ProgramContext context = prog.getProgramContext();
 		Memory memory = prog.getMemory();
 
-		ContinuesFactory factory = MessageLogContinuesFactory.create(log);
-		OldStyleExecutable ose = new OldStyleExecutable(factory, provider);
+		OldStyleExecutable ose = new OldStyleExecutable(provider);
 		DOSHeader dos = ose.getDOSHeader();
-		FactoryBundledWithBinaryReader reader = ose.getBinaryReader();
+		BinaryReader reader = ose.getBinaryReader();
 
 		if (monitor.isCancelled()) {
 			return;
@@ -263,16 +258,12 @@ public class DosLoader extends AbstractLibrarySupportLoader {
 
 		try {
 			context.setValue(sp, entry.getAddress(), entry.getAddress(),
-				BigInteger.valueOf(Conv.shortToLong(dos.e_sp())));
+				BigInteger.valueOf(dos.e_sp()));
 			context.setValue(ss, entry.getAddress(), entry.getAddress(),
-				BigInteger.valueOf(Conv.shortToLong(dos.e_ss())+INITIAL_SEGMENT_VAL));
-/*
-			BigInteger csValue = BigInteger.valueOf(
-					Conv.intToLong(((SegmentedAddress) entry.getAddress()).getSegment()));
-*/
+				BigInteger.valueOf(dos.e_ss()+INITIAL_SEGMENT_VAL));
 			// CS should point to segment for each loaded segment
 			// In case of a data segment that is pointless but do no harm
-			// Any jump/call into the segment should be a far one anyway
+			// Any jump/call into the segment should be a far one
 			for (MemoryBlock block : blocks) {
 				SegmentedAddress start = (SegmentedAddress) block.getStart();
 				int csValue = start.getSegment();
@@ -287,15 +278,15 @@ public class DosLoader extends AbstractLibrarySupportLoader {
 	}
 
 	private void processSegments(Program program, FileBytes fileBytes, SegmentedAddressSpace space,
-			FactoryBundledWithBinaryReader reader, DOSHeader dos, MessageLog log,
+			BinaryReader reader, DOSHeader dos, MessageLog log,
 			TaskMonitor monitor) {
 		try {
-			int relocationTableOffset = Conv.shortToInt(dos.e_lfarlc());
+			int relocationTableOffset = dos.e_lfarlc();
 			int csStart = INITIAL_SEGMENT_VAL;
 			int dataStart = dos.e_cparhdr() << 4;
 
 			SegmentedAddress codeAddress =
-					space.getAddress(Conv.shortToInt(dos.e_cs()) + csStart, 0);
+					space.getAddress(dos.e_cs() + csStart, 0);
 
 			HashMap<Address, Address> segMap = new HashMap<Address, Address>();
 			segMap.put(codeAddress, codeAddress);
@@ -304,8 +295,8 @@ public class DosLoader extends AbstractLibrarySupportLoader {
 			int numRelocationEntries = dos.e_crlc();
 			reader.setPointerIndex(relocationTableOffset);
 			for (int i = 0; i < numRelocationEntries; i++) {
-				int off = Conv.shortToInt(reader.readNextShort());
-				int seg = Conv.shortToInt(reader.readNextShort());
+				int off = reader.readNextShort();
+				int seg = reader.readNextShort();
 
 				// compute the new segment referenced at the location
 				SegmentedAddress segStartAddr = space.getAddress(seg + csStart, 0);
@@ -314,8 +305,8 @@ public class DosLoader extends AbstractLibrarySupportLoader {
 				int location = (seg << 4) + off;
 				int locOffset = location + dataStart;
 
-				int value = Conv.shortToInt(reader.readShort(locOffset));
-				int fixupAddrSeg = (value + csStart) & Conv.SHORT_MASK;
+				int value = reader.readShort(locOffset);
+				int fixupAddrSeg = (value + csStart) & 0xffff;
 				SegmentedAddress fixupAddr = space.getAddress(fixupAddrSeg, 0);
 				segMap.put(fixupAddr, fixupAddr);
 			}
@@ -388,21 +379,21 @@ public class DosLoader extends AbstractLibrarySupportLoader {
 		}
 	}
 
-	private void doRelocations(Program prog, FactoryBundledWithBinaryReader reader, DOSHeader dos) {
+	private void doRelocations(Program prog, BinaryReader reader, DOSHeader dos) {
 		try {
 			Memory mem = prog.getMemory();
 			SegmentedAddressSpace space =
 				(SegmentedAddressSpace) prog.getAddressFactory().getDefaultAddressSpace();
 
-			int relocationTableOffset = Conv.shortToInt(dos.e_lfarlc());
+			int relocationTableOffset = dos.e_lfarlc();
 			int csStart = INITIAL_SEGMENT_VAL;
 			int dataStart = dos.e_cparhdr() << 4;
 
 			int numRelocationEntries = dos.e_crlc();
 			reader.setPointerIndex(relocationTableOffset);
 			for (int i = 0; i < numRelocationEntries; i++) {
-				int off = Conv.shortToInt(reader.readNextShort());
-				int seg = Conv.shortToInt(reader.readNextShort());
+				int off = reader.readNextShort();
+				int seg = reader.readNextShort();
 
 				//SegmentedAddress segStartAddr = space.getAddress(seg + csStart, 0);
 
@@ -411,8 +402,8 @@ public class DosLoader extends AbstractLibrarySupportLoader {
 
 				// compute the new segment referenced at the location
 				SegmentedAddress fixupAddr = space.getAddress(seg + csStart, off);
-				int value = Conv.shortToInt(reader.readShort(locOffset));
-				int fixupAddrSeg = (value + csStart) & Conv.SHORT_MASK;
+				int value = reader.readShort(locOffset);
+				int fixupAddrSeg = (value + csStart) & 0xffff;
 				mem.setShort(fixupAddr, (short) fixupAddrSeg);
 
 				// Add to relocation table
@@ -431,10 +422,10 @@ public class DosLoader extends AbstractLibrarySupportLoader {
 
 	private void createSymbols(SegmentedAddressSpace space, SymbolTable symbolTable,
 			DOSHeader dos) {
-		int ipValue = Conv.shortToInt(dos.e_ip());
-		int codeSegment = Conv.shortToInt(dos.e_cs()) + INITIAL_SEGMENT_VAL;
+		int ipValue = dos.e_ip();
+		int codeSegment = dos.e_cs() + INITIAL_SEGMENT_VAL;
 
-		if (codeSegment > Conv.SHORT_MASK) {
+		if (codeSegment > 0xffff) {
 			System.out.println("Invalid entry point location: " + Integer.toHexString(codeSegment) +
 				":" + Integer.toHexString(ipValue));
 			return;
