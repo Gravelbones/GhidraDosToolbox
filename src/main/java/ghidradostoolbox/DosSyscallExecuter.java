@@ -1,6 +1,6 @@
 package ghidradostoolbox;
 /* ###
- * IP: Morten R�nne
+ * IP: Morten Rønne
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,6 +38,7 @@ import ghidra.program.model.data.DataTypeManager;
 import ghidra.program.model.data.InvalidDataTypeException;
 import ghidra.program.model.lang.BasicCompilerSpec;
 import ghidra.program.model.lang.Register;
+import ghidra.program.model.lang.SpaceNames;
 import ghidra.program.model.listing.*;
 import ghidra.program.model.listing.Function.FunctionUpdateType;
 import ghidra.program.model.mem.MemoryAccessException;
@@ -139,7 +140,7 @@ public class DosSyscallExecuter {
 				return false;
 			}
 			Address startAddr = program.getAddressFactory().getAddressSpace(
-					BasicCompilerSpec.OTHER_SPACE_NAME).getAddress(0x0L);
+					SpaceNames.OTHER_SPACE_NAME).getAddress(0x0L);
 			// The block should be filled with 0xCB = RETF instructions
 			AddUninitializedMemoryBlockCmd cmd = new AddUninitializedMemoryBlockCmd(
 					SPACE_NAME, "Dos Interrupt Function area", this.getClass().getName(), startAddr,
