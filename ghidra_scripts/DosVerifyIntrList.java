@@ -29,6 +29,7 @@ import ghidra.app.services.DataTypeManagerService;
 import ghidra.framework.Application;
 import ghidra.program.model.data.DataType;
 import ghidra.program.model.data.DataTypeManager;
+import ghidra.program.model.data.InvalidDataTypeException;
 import ghidra.program.model.lang.Language;
 import ghidra.program.model.lang.Register;
 import ghidra.util.Msg;
@@ -79,16 +80,17 @@ public class DosVerifyIntrList extends GhidraScript {
     			if (!line.startsWith("#") && !line.equals("")) {
     				parts = line.trim().split(" ");
     				if (parts.length != 6) {
-    					Msg.info(this, "Expected 6 parameters. Line " + lineno);
+    					Msg.showInfo(this, null, "Error", "Expected 6 parameters. Line " + lineno);
+    					continue;
     				}
 
     				// Test the interrupt number for range (part of the instruction)
 					no = convertHex(parts[0]);
 					if(no < 0 || no > 255) {
-						Msg.info(this, "Interrupt <"+parts[0]+"> not in range 0 - 0xff. Line: "+lineno);
+						Msg.showInfo(this, null, "Error", "Interrupt <"+parts[0]+"> not in range 0 - 0xff. Line: "+lineno);
 					}
 					if(no > int_no && int_no != -1) {
-						Msg.info(this, "Interrupt number must be same or lower than previous line: "+lineno);
+						Msg.showInfo(this, null, "Error", "Interrupt number must be same or lower than previous line: "+lineno);
 					}
 					if(no != int_no) {
 						func_no = -1;
@@ -100,14 +102,14 @@ public class DosVerifyIntrList extends GhidraScript {
 						values = ParseRegisterValue(parts[1], "AH");
 						no = convertHex(values[1]);
 						if(no < 0 || no > 255) {
-							Msg.info(this, "Function <"+values[1]+"> not in range 0 - 0xff. Line: "+lineno);
+							Msg.showInfo(this, null, "Error", "Function <"+values[1]+"> not in range 0 - 0xff. Line: "+lineno);
 						}
 						r = l.getRegister(values[0]);
 						if(r == null) {
-							Msg.info(this, "Function register <"+values[0]+"> not found. Line: "+lineno);
+							Msg.showInfo(this, null, "Error", "Function register <"+values[0]+"> not found. Line: "+lineno);
 						}
 						if(no > func_no && func_no != -1) {
-							Msg.info(this, "Function number must be same or lower than previous line: "+lineno);
+							Msg.showInfo(this, null, "Error", "Function number must be same or lower than previous line: "+lineno);
 						}
 						if(no != func_no) {
 							subfunc_no = -1;
@@ -120,14 +122,14 @@ public class DosVerifyIntrList extends GhidraScript {
 						values = ParseRegisterValue(parts[2], "AL");
 						no = convertHex(values[1]);
 						if(no < 0 || no > 255) {
-							Msg.info(this, "Subfunction <"+values[1]+"> not in range 0 - 0xff. Line: "+lineno);
+							Msg.showInfo(this, null, "Error", "Subfunction <"+values[1]+"> not in range 0 - 0xff. Line: "+lineno);
 						}
 						r = l.getRegister(values[0]);
 						if(r == null) {
-							Msg.info(this, "Subfunction register <"+values[0]+"> not found. Line: "+lineno);
+							Msg.showInfo(this, null, "Error", "Subfunction register <"+values[0]+"> not found. Line: "+lineno);
 						}
 						if(no > subfunc_no && subfunc_no != -1) {
-							Msg.info(this, "Subfuncion number must be same or lower than previous line: "+lineno);
+							Msg.showInfo(this, null, "Error", "Subfuncion number must be same or lower than previous line: "+lineno);
 						}
 						if(no != subfunc_no) {
 							subfunc_no = no;
@@ -136,45 +138,57 @@ public class DosVerifyIntrList extends GhidraScript {
 
 					// Function name must start with letter and contain letters, digits or _ after that
 					if (!parts[3].matches("\\A[A-Za-z][A-Za-z0-9_]*\\z")) {
-						Msg.info(this, "Function name <"+parts[3]+"> isn't valid. Line "+lineno);
+						Msg.showInfo(this, null, "Error", "Function name <"+parts[3]+"> isn't valid. Line "+lineno);
 					}
 
 					// Check the return value
 					if (!parts[4].equals("void")) {
 						values = parts[4].split(":");
 						if (values.length < 2) {
-	    					Msg.info(this, "Return <"+parts[4]+"> must be at least 2 elements. Line " + lineno);
+	    					Msg.showInfo(this, null, "Error", "Return <"+parts[4]+"> must be at least 2 elements. Line " + lineno);
+	    					continue;
 						}
-				   		dt = parser.parse(values[0]);
+						try {
+							dt = parser.parse(values[0]);
+						}
+						catch(InvalidDataTypeException e) {
+							dt = null;
+						}
 				   		if (dt == null) {
-				   			Msg.info(this, "Return type <"+values[0]+"> couldn't be parsed. Line "+lineno);
+				   			Msg.showInfo(this, null, "Error", "Return type <"+values[0]+"> couldn't be parsed. Line "+lineno);
 				   		}
 				   		for (i = 0; i < values.length-1; i++) {
 				   			r = l.getRegister(values[i+1]);
 							if(r == null) {
-								Msg.info(this, "Return register <"+values[i+1]+"> not found. Line: "+lineno);
+								Msg.showInfo(this, null, "Error", "Return register <"+values[i+1]+"> not found. Line: "+lineno);
 							}
 				   		}
 					}
 
-					if (!parts[4].equals("void")) {
+					if (!parts[5].equals("void")) {
 						param_list = parts[5].split(",");
 						for( i = 0; i < param_list.length; i++) {
 							values = param_list[i].split(":");
 							if (values.length < 3) {
-		    					Msg.info(this, "Parameter <"+param_list[i]+"> must be at least 3 elements. Line " + lineno);
+		    					Msg.showInfo(this, null, "Error", "Parameter <"+param_list[i]+"> must be at least 3 elements. Line " + lineno);
+		    					continue;
 							}
 							if (!values[0].matches("\\A[A-Za-z][A-Za-z0-9_]*\\z")) {
-								Msg.info(this, "Parameter name <"+values[0]+"> isn't valid. Line "+lineno);
+								Msg.showInfo(this, null, "Error", "Parameter name <"+values[0]+"> isn't valid. Line "+lineno);
 							}
-							dt = parser.parse(values[1]);
+							try {
+								dt = parser.parse(values[1]);
+							}
+							catch(InvalidDataTypeException e) {
+								dt = null;
+							}
 					   		if (dt == null) {
-					   			Msg.info(this, "Parameter type <"+values[1]+"> couldn't be parsed. Line "+lineno);
+					   			Msg.showInfo(this, null, "Error", "Parameter type <"+values[1]+"> couldn't be parsed. Line "+lineno);
 					   		}
 							for (n = 0; n < values.length-2; n++) {
 								r = l.getRegister(values[n+2]);
 								if(r == null) {
-									Msg.info(this, "Parameter register <"+values[n+2]+"> not found. Line: "+lineno);
+									Msg.showInfo(this, null, "Error", "Parameter register <"+values[n+2]+"> not found. Line: "+lineno);
 								}
 							}
 						}

@@ -445,7 +445,7 @@ typedef struct DOSBPB {
   byte	device_type;
   word	device_attr;
 } DOSBPB;
-typedef DOSBPB*	PDOSPBP;
+typedef DOSBPB*	PDOSBPB;
 
 typedef struct DOSDPB {
   byte	drive_number;

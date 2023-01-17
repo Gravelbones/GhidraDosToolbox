@@ -3,9 +3,9 @@
 # NOTE: The file must be sorted in descending order
 ## ## ## ################################## ###### ## ##
 21 5D 0B DosGetSwapableDataAreas R_DATASWAPAREAS:AX:DS:SI void
-21 5D 0A DosSetExtendedErrorInfo void param=PDOSPARAMLIST:DS:DX
+21 5D 0A DosSetExtendedErrorInfo void param:PDOSPARAMLIST:DS:DX
 21 5D 09 DosFlushPrinterOutput void void
-21 5D 08 DosSetRedirectedPrinterMode void mode=byte:DL
+21 5D 08 DosSetRedirectedPrinterMode void mode:byte:DL
 21 5D 07 DosGetRedirectedPrinterMode byte:DL void
 21 5D 06 DosGetAddressSwapableData R_ADRSWAP:AX:DS:SI:CX:DX void
 21 5D 05 DosServerGetOpenFileEntry word:AX dpl:PDOSPARAMLIST:DS:DX
@@ -27,13 +27,14 @@
 21 57 05 DosSetAccessDateTime word:AX handle:word:BX,time:word:CX,date:word:DX
 21 57 04 DosSetExtendedAttr word:AX handle:word:BX,eav_list:PDOSEAVLIST:ES:DI
 21 57 03 DosGetExtendedAttrProp R_STATUSLEN:AX:CX handle:word:BX,size:word:CX,buffer:byte*:ES:DI
-21 57 02 DosGetExtendedAttr R_STATUSLEN:AX:CX handle:word:BX,size:word:CX,eap:PEAPLIST:DS:SI,eav:PEAVLIST:ES:DI
+21 57 02 DosGetExtendedAttr R_STATUSLEN:AX:CX handle:word:BX,size:word:CX,eap:PDOSEAPLIST:DS:SI,eav:PDOSEAVLIST:ES:DI
 21 57 01 DosSetFileTimestamp word:AX handle:word:BX,time:word:CX,date:word:DX
 21 57 00 DosGetFileTimestamp R_FILEINFO:AX:CX:DX handle:word:BX
 21 56 -- DosRenameFile word:AX name:char*:DS:DX,newname:char*:ES:DI
 21 55 -- DosCreateChildPSP void segment:word:DX,size:word:SI
 21 54 -- DosGetVerifyFlag byte:AL void
-21 53 -- DosTranslateBiosParamBlkToDriveParamBlock void bios:PDOSBPB:DS:SI,drive:PDOSDPB:ES:BP
+# PDOSPBP should be PDOSBPB - need new type archive for that
+21 53 -- DosTranslateBiosParamBlkToDriveParamBlock void bios:PDOSPBP:DS:SI,drive:PDOSDPB:ES:BP
 21 52 -- DosGetSysvars PDOSSYSVAR:ES:BX void
 21 51 -- DosGetCurrentProcId word:BX void
 21 50 -- DosSetCurrentProcId void procid:word:BX
@@ -50,7 +51,7 @@
 21 49 -- DosFreeMemory word:AX memblock:word:ES
 21 48 -- DosAllocateMemory word:AX size:word:BX
 21 47 -- DosGetCurrentDir word:AX drive:byte:DL,buffer:PDOSASCIIZPATH:DS:SI
-21 46 -- DosForceDuplicateHandle word:AX handle:word:BX,dup:handle:word:CX
+21 46 -- DosForceDuplicateHandle word:AX handle:word:BX,dup_handle:word:CX
 21 45 -- DosDuplicateHandle word:AX handle:word:BX
 21 44 11 DosQueryGenericIoctlDrive word:AX drive:byte:BL,category:byte:CH,function:byte:CL
 21 44 10 DosQueryGenericIoctlHandle word:AX handle:word:BX,category:byte:CH,function:byte:CL
@@ -89,7 +90,8 @@
 21 37 01 DosSetSwitchChar byte:AL ch:byte:DL
 21 37 00 DosGetSwitchChar R_SWITCHCHAR:AL:DL void
 21 36 -- DosGetFreeDiskSpace R_DISKSPACE:AX:BX:CX:DX drive:byte:DL
-21 35 -- DosGetInterruptVector InterruptVector:ES:BX intr:byte:AL
+#21 35 -- DosGetInterruptVector InterruptVector:ES:BX intr:byte:AL
+21 35 -- DosGetInterruptVector dword:ES:BX intr:byte:AL
 21 34 -- DosGetAddressInDosFlag byte*:ES:BX void
 21 33 06 DosGetTrueVersion R_TRUEVERSION:AL:BL:BH:DL:DH void
 21 33 05 DosGetBootDrive byte:DL void
@@ -104,16 +106,17 @@
 21 2D -- DosSetSystemTime byte:AL hour:byte:CH,minute:byte:CL,second:byte:DH,sec100:byte:DL
 21 2C -- DosGetSystemTime R_SYSTEMTIME:CH:CL:DH:DL void
 21 2B -- DosSetSystemDate byte:AL year:word:CX,month:byte:DH,day:byte:DL
-21 2A -- DosGetSystemDate R_SYSTEMDATE:CX,DH:DL:AL void
+21 2A -- DosGetSystemDate R_SYSTEMDATE:CX:DH:DL:AL void
 21 29 -- DosParseFileNameToFCB byte:AL name:char*:DS:SI,buffer:PDOSCLOSEDFCB:ES:DI,options:byte:AL
 21 28 -- DosWriteRandomBlockFCB R_FILESTATUS:CX:AL fcb:PDOSOPENFCB:DS:DX,len:word:CX
 21 27 -- DosReadRandomBlockFCB R_FILESTATUS:CX:AL fcb:PDOSOPENFCB:DS:DX,len:word:CX
 21 26 -- DosCreateNewPSP void new_psp:word:DX
-21 25 -- DosSetInterruptVector void intr:byte:AL,func:InterruptVectpr:DS:DX
+#21 25 -- DosSetInterruptVector void intr:byte:AL,func:InterruptVector:DS:DX
+21 25 -- DosSetInterruptVector void intr:byte:AL,func:dword:DS:DX
 21 24 -- DosSetRandomRecNoFCB void fcb:PDOSOPENFCB:DS:DX
 21 23 -- DosGetFileSizeFCB byte:AL fcb:PDOSOPENFCB:DS:DX
 21 22 -- DosWriteRandomRecFCB byte:AL fcb:PDOSOPENFCB:DS:DX
-21 21 -- DosReadRandomRecFCB byte:AL fcb:POPENDOSFCB:DS:DX
+21 21 -- DosReadRandomRecFCB byte:AL fcb:PDOSOPENFCB:DS:DX
 21 20 -- DosReservedCPMFunction void void
 21 1F -- DosGetDriveParam R_GETPDB:DS:BX:AL void
 21 1E -- DosReservedCPMFunction void void
@@ -128,8 +131,8 @@
 21 15 -- DosSequentialWriteFCB byte:AL fcb:PDOSOPENFCB:DS:DX
 21 14 -- DosSequentialReadFCB byte:AL fcb:PDOSOPENFCB:DS:DX
 21 13 -- DosDeleteFileFCB byte:AL fcb:PDOSCLOSEDFCB:DS:DX
-21 12 -- DosFindNextFileFCB byte:AL fcb:POPENDOSFCB:DS:DX
-21 11 -- DosFindFirstFileFCB byte:AL fcb:PFOSOPENFCB:DS:DX
+21 12 -- DosFindNextFileFCB byte:AL fcb:PDOSOPENFCB:DS:DX
+21 11 -- DosFindFirstFileFCB byte:AL fcb:PDOSOPENFCB:DS:DX
 21 10 -- DosCloseFileFCB byte:AL fcb:PDOSOPENFCB:DS:DX
 21 0F -- DosOpenFileFCB byte:AL fcb:PDOSOPENFCB:DS:DX
 21 0E -- DosSelectDefaultDrive byte:AL drive:byte:DL
