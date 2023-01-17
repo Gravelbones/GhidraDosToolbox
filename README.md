@@ -137,8 +137,7 @@ Then copy the script and/or the analyzer and change the name passed
 to the class doing the work.
 
 # TODO:
-- Script for validating the entire interrupt file.
-- Call fixup at INT locations, to remove swi() disassembly.
+- Call fixup at INT locations, to remove swi() disassembly (waiting for new system in Ghidra)
 - Fixed memory regions like screen ram, ROMS and so on.
 - I/O ports. DOS has much more I/O than standard programs to day, even non device drivers.
 - Find common library function from various compilers without access to the compiler.
