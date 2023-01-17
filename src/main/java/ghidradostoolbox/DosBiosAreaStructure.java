@@ -14,11 +14,7 @@ public class DosBiosAreaStructure implements StructConverter {
 	@Override
 	public DataType toDataType() throws DuplicateNameException, IOException {
 		StructureDataType struct = new StructureDataType(NAME, 0);
-		struct.add(WORD);
-
-        struct.getComponent(0).setFieldName("first");
-
-        struct.getComponent(0).setComment("Fill out with information");
+		struct.add(WORD, "first", "Fill out with information");
 
 		struct.setCategoryPath(new CategoryPath("/DOS"));
 
