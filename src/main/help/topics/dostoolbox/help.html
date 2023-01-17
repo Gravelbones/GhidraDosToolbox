@@ -1,0 +1,68 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<HTML>
+  <HEAD>
+    <META name="generator" content=
+    "HTML Tidy for Java (vers. 2009-12-01), see jtidy.sourceforge.net">
+    <META http-equiv="Content-Language" content="en-us">
+    <META http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+    <TITLE>DOS Reverse Engineering</TITLE>
+    <LINK rel="stylesheet" type="text/css" href="../../shared/Frontpage.css">
+  </HEAD>
+
+  <BODY>
+    <H1><a name="ghidradostoolbox"></a>DOS reverse engineering</H1>
+
+	<H2>About this page</H2>
+	<p>If you are new to the DOS scene here are some pointers on how to getting started, and pointers to
+	references and information about DOS.</p>
+	<H2>Compilers</H2>
+	<p>Every compiler has there own interface into DOS and BIOS. They hide the implementation detail
+	between "high" level C-functions like fopen, fread, printf and lower level DOS functions.
+	</p>
+	<p>
+	So the first order of business is to detect the compiler (language) as soon as possible.
+	</p>
+	<p>
+	Hopefully Ghidra got some knowledge already on how to deduce this. Otherwise go with a default,
+	and be ready to redo some stuff when you detect the correct compiler.
+	</p>
+	<H2>Memory mode and models</H2>
+	<p>DOS generally works in Real mode, as opposed to protected mode used now. That meant you had
+	to spend some time handling memory reference and therefore compilers worked with memory models
+	<a href="https://devblogs.microsoft.com/oldnewthing/20200728-00/?p=104012">(Why was that)</a>.</p>
+	<p>Understanding this helps understand why 2 programs which does the same, might not look the same
+	when it comes to the code. It also important when it comes to near or far pointers.</p>
+	<p>It also meant that a program could access any part of the memory (and often did).
+	This where on of the ways to speed things up.
+	<br/>
+	As newer processors with protected (32 bit) mode became available, DOS remained working with real mode,
+	but programs might try to detect if protected memory mode, or at least 32 bit mode
+	is available and then use that to avoid the hassle of the real mode memory model.
+	</p>
+	<p>At the same time, more memory than 1Mb became available, but DOS couldn't handle that (directly),
+	so a number of memory managers emerged, which could help with that. DOS/4G(W) became a leading program/library
+	for working with that.</p>
+	<H2>Filenames</H2>
+	<p>
+	Originally DOS could only handle filenames 8 characters long, with a 3 letter extension (the reason why
+	there is .htm and .html).
+	<br/>
+	Those files where handle through File Control Blocks (FCB), but with the introduction of Long File Names (LFN)
+	the handle was introduced. But also functions to map long filenames into 8.3 format. (The name is cut off and
+	~<number> is added) to support "old" DOS programs.
+	</p>
+	<H2>Function Identifier Databases (FID)</H2>
+	<p>To help identify all those low level functions, the use of FID databases is an important step. But so far
+	not many exists or can be hard to find, due to lack of access to the old compiler libraries.
+	</p>
+	<p>So one of the first tasks can be identifying as much of those low level implementations, and hopefully
+	help expand the FID databases, which your version of those, to help others.</p>
+	<H2>DOS/BIOS interrupts</H2>
+	<p>The main interface to the machine and DOS where through the use of Software Interrupt (assembler name INT).
+	A great ressource of all of this is <a href="https://en.wikipedia.org/wiki/Ralf_Brown%27s_Interrupt_List">The Ralf
+	Brown Interrupt List</a>. At only 2500+ pages always a light read.
+	</p>
+  </BODY>
+</HTML>
