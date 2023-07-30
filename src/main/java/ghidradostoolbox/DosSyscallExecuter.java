@@ -304,7 +304,7 @@ public class DosSyscallExecuter {
 
 		for (Function func : funcsToCalls.keySet()) {
 			Address start = func.getEntryPoint();
-			ContextEvaluator eval = new ConstantPropagationContextEvaluator(true);
+			ContextEvaluator eval = new ConstantPropagationContextEvaluator(monitor);
 			SymbolicPropogator symEval = new SymbolicPropogator(program);
 			symEval.flowConstants(start, func.getBody(), eval, true, monitor);
 			for (Instruction inst : funcsToCalls.get(func)) {
